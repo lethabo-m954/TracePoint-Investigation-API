@@ -124,7 +124,7 @@ Create: 'ApplicationDbContext.cs'
 
 ### 5.1 ApplicationDbContext.cs
 
-``bash
+```bash
 using Microsoft.EntityFrameworkCore;
 using TracePointAPI.Models;
 
