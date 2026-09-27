@@ -299,12 +299,12 @@ Update-Database
 ### Database Information
 
 The database will be created as: 
-* `TracePointDB`
+`TracePointDB`
 
 The database will contain the following tables:
-- `Cases`
-- `Suspects`
-- `Evidences`
-- `Investigations`
+- Cases
+- Suspects
+- Evidences
+- Investigations
 
 
