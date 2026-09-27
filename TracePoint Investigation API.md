@@ -234,3 +234,77 @@ namespace TracePointAPI.Data
 }
 ```
 
+## 6. Database Connection
+
+Open: 'appsettings.json'
+
+Replace the contents with:
+
+```bash
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=TracePointDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  },
+
+  "AllowedHosts": "*"
+}
+```
+## 7. Configure Program.cs
+ Use the following:
+
+ ```bash
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=TracePointDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
+  },
+
+  "AllowedHosts": "*"
+}
+```
+## 8. Create and Apply the Database Migration
+
+Follow this menu path to open the console:
+
+```text
+[ Tools ]
+    │
+    ▼
+[ NuGet Package Manager ]
+    │
+    ▼
+[ Package Manager Console ]
+```
+
+Run the following commands in order:
+
+```powershell
+Add-Migration InitialCreate
+Update-Database
+```
+
+### Database Information
+
+The database will be created as: 
+* `TracePointDB`
+
+The database will contain the following tables:
+- `Cases`
+- `Suspects`
+- `Evidences`
+- `Investigations`
+
+
