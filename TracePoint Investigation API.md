@@ -53,7 +53,7 @@ Install-Package Microsoft.EntityFrameworkCore.SqlServer
 Install-Package Microsoft.EntityFrameworkCore.Tools
 Install-Package Dapper
 Install-Package Microsoft.EntityFrameworkCore.Design
-
+```
 
 # 4. Backend Models
 Create a folder called: `Models`
