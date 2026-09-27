@@ -307,4 +307,122 @@ The database will contain the following tables:
 - Evidences
 - Investigations
 
+## 9. API Controllers
+
+### 9.1 CasesController.cs
+Create: 'Controllers/CasesController.cs'
+
+```bash
+## 8. Create and Apply the Database Migration
+
+Follow this menu path to open the console:
+
+```text
+[ Tools ]
+    │
+    ▼
+[ NuGet Package Manager ]
+    │
+    ▼
+[ Package Manager Console ]
+```
+
+Run the following commands in order:
+
+```powershell
+Add-Migration InitialCreate
+Update-Database
+```
+
+### 9.1 Database Information
+
+```bash
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TracePointAPI.Data;
+using TracePointAPI.Models;
+
+namespace TracePointAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CasesController : ControllerBase
+    {
+        private readonly ApplicationDbContext _context;
+
+        public CasesController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/cases
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Case>>> GetCases()
+        {
+            return await _context.Cases.ToListAsync();
+        }
+
+        // GET: api/cases/{id:int}
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Case>> GetCase(int id)
+        {
+            var caseItem = await _context.Cases.FindAsync(id);
+
+            if (caseItem == null)
+            {
+                return NotFound();
+            }
+
+            return caseItem;
+        }
+    }
+}
+```
+### 9.2 SuspectController.cs
+Create: 'Controllers/SuspectsController.cs`
+
+```bash
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using TracePointAPI.Data;
+using TracePointAPI.Models;
+
+namespace TracePointAPI.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SuspectsController : ControllerBase
+    {
+        private readonly ApplicationDbContext _context;
+
+        public SuspectsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/suspects
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Suspect>>> GetSuspects()
+        {
+            return await _context.Suspects.ToListAsync();
+        }
+
+        // GET: api/suspects/{id:int}
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<Suspect>> GetSuspect(int id)
+        {
+            var suspect = await _context.Suspects.FindAsync(id);
+
+            if (suspect == null)
+            {
+                return NotFound();
+            }
+
+            return suspect;
+        }
+    }
+}
+```
+
+
 
