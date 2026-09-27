@@ -53,3 +53,21 @@ Install-Package Microsoft.EntityFrameworkCore.SqlServer
 Install-Package Microsoft.EntityFrameworkCore.Tools
 Install-Package Dapper
 Install-Package Microsoft.EntityFrameworkCore.Design
+
+
+# 4. Backend Models
+Create a folder called: `Models`
+
+## 4.1 Case.cs
+```csharp
+namespace TracePointAPI.Models 
+{ 
+    public class Case 
+    { 
+        public int CaseID { get; set; } 
+        public string CaseName { get; set; } = string.Empty; 
+        public string Description { get; set; } = string.Empty; 
+        public string Status { get; set; } = string.Empty; 
+    } 
+}
+```
