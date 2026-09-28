@@ -1,8 +1,8 @@
-** 1. TracePoint-Investigation-API - Digital Investigation System
+# 1. TracePoint-Investigation-API - Digital Investigation System
 
 A full-stack investigation app for TracePoint Investigations. ASP.NET Core Web API + Entity Framework Core + Dapper backend with a React (React Router + Bootstrap) frontend. Investigators view a case, examine suspects and evidence, select a suspect, submit a conclusion, and persist the investigation to SQL Server.
 
-** 2. Application Description
+# 2. Application Description
 
 TracePoint Investigations is a fictional private investigation company. This
 system allows an investigator to work through a digital case file for
@@ -27,7 +27,7 @@ A second data access path (Dapper) is used to produce an investigation summary
 that joins investigations with suspect names.
 
 ---
-** 3. Technologies Used
+# 3. Technologies Used
 
 | Layer | Technology |
 |---|---|
