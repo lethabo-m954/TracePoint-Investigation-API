@@ -1,6 +1,62 @@
-# 1. TracePoint-Investigation-API - Digital Investigation System
+# TracePoint-Investigation-API - Digital Investigation System
 
-A full-stack investigation app for TracePoint Investigations. ASP.NET Core Web API + Entity Framework Core + Dapper backend with a React (React Router + Bootstrap) frontend. Investigators view a case, examine suspects and evidence, select a suspect, submit a conclusion, and persist the investigation to SQL Server.
+# 1. Project Overview
+
+# 1.1 Introduction
+
+**TracePoint Investigations** is a fictional private investigation company
+that requires a bespoke digital investigation system. The system was
+commissioned to replace a manual, paper-based case-file workflow with a
+browser-accessible, database-driven platform that allows a single investigator
+to open a case, review the evidence, examine suspects, and formally submit a
+conclusion.
+
+This project delivers that system end-to-end as a **full-stack web
+application**, built in accordance with the NWED622 Practical Assignment
+specification. It demonstrates competence across the full modern web
+development stack: REST API design, relational database modelling, ORM
+integration, alternative raw-SQL data access, component-based frontend
+development, client-side routing, state management, and automated testing.
+
+# 1.2 Business Problem
+
+Before this system, TracePoint Investigations had no consistent way to:
+
+- Store case data in one central location
+- Link suspects and evidence to a specific case
+- Record which suspect an investigator had concluded was most likely
+- Keep an audit trail of when each investigation was submitted
+- Allow an investigator to work from any device connected to the company
+  network
+- Retrieve a combined view of all investigations alongside the name of the
+  suspect each one points to
+
+The absence of a system meant that case files could be lost, evidence could
+be misfiled, and conclusions could not be traced back to a timestamp or a
+particular investigator. This project solves each of those problems through a
+structured, relational database and a browser-based interface.
+
+# 1.3 Scope of the System
+
+The application implements the following functional capabilities:
+
+| # | Capability | Where implemented |
+|---|---|---|
+| 1 | View the case file | `/case` — `CasePage.jsx` calls `GET /api/cases/1` |
+| 2 | View all suspects | `/suspects` — `SuspectsPage.jsx` calls `GET /api/suspects` |
+| 3 | View all evidence | `/evidence` — `EvidencePage.jsx` calls `GET /api/evidence` |
+| 4 | Examine an individual piece of evidence | Modal in `EvidencePage.jsx`, driven by `useState` |
+| 5 | Select a suspect | Dropdown in `InvestigationPage.jsx`, driven by `useState` |
+| 6 | Enter an investigation conclusion | Textarea in `InvestigationPage.jsx`, driven by `useState` |
+| 7 | Submit the investigation | Form POST to `/api/investigations` |
+| 8 | Store the investigation in the database | `InvestigationsController` → EF Core → SQL Server |
+| 9 | Display a confirmation message | Success alert in `InvestigationPage.jsx` |
+| 10 | View investigations joined with suspect names | `GET /api/investigations/summary` (Dapper) |
+
+The scope deliberately excludes user authentication, role-based access,
+multiple concurrent cases, and evidence upload — none of which are required
+by the assignment brief. The design nonetheless leaves clear extension points
+for those features.
 
 # 2. Application Description
 
@@ -29,22 +85,226 @@ that joins investigations with suspect names.
 ---
 # 3. Technologies Used
 
-| Layer | Technology |
+| Layer | Technology | Purpose |
+|---|---|---|
+| Backend Framework | ASP.NET Core Web API (.NET 10) | REST API host |
+| API Controllers | ASP.NET Core Controllers | Request handling |
+| Routing | Attribute-based routing with `:int` constraint | URL matching |
+| Primary ORM | Entity Framework Core | CRUD operations |
+| Alternative Data Access | Dapper | Raw SQL joined query |
+| Database | SQL Server (LocalDB) | Persistent storage |
+| Frontend Framework | React 18 | SPA UI |
+| Build Tool | Vite | Fast React dev server |
+| Frontend Routing | React Router v6 | Client-side navigation |
+| HTTP Client | Axios | Fetch wrapper for the API |
+| Styling | Custom CSS (responsive) | Dark investigation theme |
+| Testing (backend) | xUnit | Unit + integration tests |
+| Testing (integration) | `Microsoft.AspNetCore.Mvc.Testing` | In-memory API host |
+
+# 4. Project Structure
+
+│
+├── TracePointAPI/                    ← ASP.NET Core Web API (backend)
+│   ├── Controllers/
+│   │   ├── CasesController.cs
+│   │   ├── SuspectsController.cs
+│   │   ├── EvidenceController.cs
+│   │   └── InvestigationsController.cs
+│   ├── Data/
+│   │   └── TracePointContext.cs      ← EF Core DbContext + seed data
+│   ├── Migrations/                   ← EF Core migration files
+│   ├── Models/
+│   │   ├── Case.cs
+│   │   ├── Suspect.cs
+│   │   ├── Evidence.cs
+│   │   ├── Investigation.cs
+│   │   └── DTOs/
+│   │       ├── CreateInvestigationDto.cs
+│   │       └── InvestigationSummaryDto.cs
+│   ├── Program.cs
+│   ├── appsettings.json
+│   └── TracePointAPI.csproj
+│
+├── TracePointClient/                 ← React frontend
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── Navigation.jsx
+│   │   │   ├── CaseCard.jsx
+│   │   │   ├── SuspectCard.jsx
+│   │   │   └── EvidenceCard.jsx
+│   │   ├── pages/
+│   │   │   ├── Home.jsx
+│   │   │   ├── CasePage.jsx
+│   │   │   ├── SuspectsPage.jsx
+│   │   │   ├── EvidencePage.jsx
+│   │   │   └── InvestigationPage.jsx
+│   │   ├── services/
+│   │   │   └── api.js
+│   │   ├── App.jsx
+│   │   ├── main.jsx
+│   │   └── styles.css
+│   ├── package.json
+│   └── vite.config.js
+│
+├── TracePointAPI.Tests/              ← xUnit test project
+│   ├── Validation.cs
+│   ├── UnitTests.cs
+│   ├── IntegrationTests.cs
+│   └── TracePointAPI.Tests.csproj
+│
+├── Database/
+│   └── TracePointDB_Create.sql
+│
+└── README.md
+`
+
+# 5. Main Folders
+
+# Backend — `TracePointAPI/`
+
+| Folder | Responsibility |
 |---|---|
-| Backend | ASP.NET Core Web API (.NET 10) |
-| Controllers | ASP.NET Core Controllers with attribute-based routing |
-| ORM | Entity Framework Core |
-| Alternative data access | Dapper |
-| Database | SQL Server (LocalDB) |
-| Frontend | React 18 + Vite |
-| Frontend routing | React Router v6 |
-| HTTP client | Axios |
-| Styling | Custom CSS (responsive) |
-| Testing | xUnit (unit + integration) |
+| `Controllers/` | One controller per resource. Each exposes attribute-routed HTTP endpoints returning JSON. |
+| `Data/` | Contains `TracePointContext` (EF Core `DbContext`). Responsible for connecting to SQL Server, defining `DbSet`s, and seeding initial case data. |
+| `Migrations/` | Auto-generated by `dotnet ef migrations add`. Contains the code that creates tables and inserts seed rows. |
+| `Models/` | Domain entities (`Case`, `Suspect`, `Evidence`, `Investigation`) mapping directly to database tables. |
+| `Models/DTOs/` | Data Transfer Objects shaping API input (`CreateInvestigationDto`) and Dapper output (`InvestigationSummaryDto`). |
 
----
+# Frontend — `TracePointClient/src/`
 
-** 4. API Endpoints
+| Folder | Responsibility |
+|---|---|
+| `components/` | Reusable presentational components (`Navigation`, `CaseCard`, `SuspectCard`, `EvidenceCard`). Each receives data via props. |
+| `pages/` | One file per route. Pages fetch data from the API, hold state, and compose components. |
+| `services/` | `api.js` centralises all Axios calls. Changing the API base URL is a one-line edit. |
+
+# Tests — `TracePointAPI.Tests/`
+
+| File | Responsibility |
+|---|---|
+| `Validation.cs` | Extracted pure validation logic. |
+| `UnitTests.cs` | 3 unit tests verifying submit-form validation rules. |
+| `IntegrationTests.cs` | 1 integration test posting a real investigation to the in-memory API. |
+
+# 6. Database Design
+
+# Database engine
+
+SQL Server Express **LocalDB** — created and seeded automatically on first
+API startup via `db.Database.EnsureCreated()`.
+
+# Tables
+
+| Table | Purpose | Primary Key |
+|---|---|---|
+| `Cases` | Investigation case files | `CaseID` (int, identity) |
+| `Suspects` | Persons of interest | `SuspectID` (int, identity) |
+| `Evidences` | Collected evidence items | `EvidenceID` (int, identity) |
+| `Investigations` | Submitted investigation records | `InvestigationID` (int, identity) |
+
+# Entity relationships
+
+```
+    Cases                          Suspects
+  ┌─────────┐                    ┌──────────────┐
+  │ CaseID  │◄──────┐     ┌─────►│  SuspectID   │
+  │ CaseName│       │     │      │  Name        │
+  │ Desc    │       │     │      │  Occupation  │
+  │ Status  │       │     │      │  Description │
+  └─────────┘       │     │      └──────────────┘
+                    │     │
+              ┌─────┴─────┴──────┐
+              │  Investigations  │
+              │  InvestigationID │
+              │  CaseID          │ ← FK → Cases.CaseID
+              │  SuspectID       │ ← FK → Suspects.SuspectID
+              │  Conclusion      │
+              │  DateStarted     │
+              └──────────────────┘
+
+           Evidences  (standalone)
+           ┌──────────────────┐
+           │  EvidenceID      │
+           │  Title           │
+           │  Description     │
+           │  Location        │
+           └──────────────────┘
+```
+
+- **One Case → Many Investigations**
+- **One Suspect → Many Investigations**
+- **Evidence** is standalone in this assignment
+
+# Seed data
+
+| Table | Rows | Content |
+|---|---|---|
+| `Cases` | 1 | The Missing Prototype (OPEN) |
+| `Suspects` | 3 | Alex Morgan, Jamie Smith, Taylor Williams |
+| `Evidences` | 5 | Access log, CCTV, fingerprint, email, photo |
+| `Investigations` | 0 | Populated as the investigator submits |
+
+# 7. Database Entities
+
+# 7.1 `Case`
+
+| Property | Type | Description |
+|---|---|---|
+| `CaseID` | int | Primary key, identity |
+| `CaseName` | string | Name of the case |
+| `Description` | string | Full case description |
+| `Status` | string | OPEN / CLOSED (defaults to OPEN) |
+
+# 7.2 `Suspect`
+
+| Property | Type | Description |
+|---|---|---|
+| `SuspectID` | int | Primary key, identity |
+| `Name` | string | Full name |
+| `Occupation` | string | Job title |
+| `Description` | string | Background / context |
+
+# 7.3 `Evidence`
+
+| Property | Type | Description |
+|---|---|---|
+| `EvidenceID` | int | Primary key, identity |
+| `Title` | string | Short title |
+| `Description` | string | Full details |
+| `Location` | string | Where found / stored |
+
+# 7.4 `Investigation`
+
+| Property | Type | Description |
+|---|---|---|
+| `InvestigationID` | int | Primary key, identity |
+| `CaseID` | int | Foreign key → `Cases.CaseID` |
+| `SuspectID` | int | Foreign key → `Suspects.SuspectID` |
+| `Conclusion` | string | Investigator's conclusion |
+| `DateStarted` | DateTime | Submission timestamp |
+| `Case` | Case? | Navigation property |
+| `Suspect` | Suspect? | Navigation property |
+
+# 7.5 DTOs
+
+**`CreateInvestigationDto`** — POST input shape:
+
+| Property | Type |
+|---|---|
+| `CaseID` | int |
+| `SuspectID` | int |
+| `Conclusion` | string |
+
+**`InvestigationSummaryDto`** — Dapper output shape:
+
+| Property | Type |
+|---|---|
+| `InvestigationID` | int |
+| `SuspectName` | string |
+| `Conclusion` | string |
+| `DateStarted` | DateTime |
+
+# 8. API Endpoints
 
 Base URL (development): `https://localhost:7XXX/api`
 
@@ -59,7 +319,7 @@ Base URL (development): `https://localhost:7XXX/api`
 | POST | `/api/investigations` | Submits a new investigation (EF Core) |
 | GET | `/api/investigations/summary` | Returns investigations joined with suspect names (**Dapper**) |
 
-**Example POST body for `/api/investigations`:**
+# Example POST body for `/api/investigations`:**
 
 ```json
 {
@@ -68,153 +328,6 @@ Base URL (development): `https://localhost:7XXX/api`
   "conclusion": "Jamie Smith appears to be the most likely suspect because his access card was used to enter the laboratory shortly before the prototype disappeared."
 }
 ```
-
-**Example response:**
-
-```json
-{
-  "message": "Investigation Submitted Successfully",
-  "investigationID": 1
-}
-```
-
-** Routing constraint
-
-At least one endpoint uses a routing constraint. In this project,
-`/api/cases/{id:int}`, `/api/suspects/{id:int}` and `/api/evidence/{id:int}`
-all use the `:int` constraint to reject non-integer IDs with a `404`.
-
----
-
-** 4. Database Setup
-
-The database is created and seeded automatically the first time the API runs
-(via `db.Database.EnsureCreated()`), but you can also create it manually using
-EF Core migrations.
-
-** Prerequisites
-
-- SQL Server Express LocalDB (installed with Visual Studio)
-- .NET SDK matching the version in the `.csproj` (`net10.0`)
-- `dotnet-ef` CLI tool (install once):
-  ```bash
-  dotnet tool install --global dotnet-ef
-  ```
-
-** Connection string
-
-Defined in `TracePointAPI/appsettings.json`:
-
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=(localdb)\\mssqllocaldb;Database=TracePointDB;Trusted_Connection=True;MultipleActiveResultSets=true;TrustServerCertificate=True"
-}
-```
-
-** Creating the database manually (optional)
-
-```bash
-cd TracePointAPI
-dotnet ef migrations add InitialCreate
-dotnet ef database update
-```
-
-** Seed data
-
-On first creation the database is seeded with:
-
-- **1 case:** The Missing Prototype (Status: OPEN)
-- **3 suspects:** Alex Morgan, Jamie Smith, Taylor Williams
-- **5 evidence items:** Security Access Log, CCTV Report, Fingerprint Report,
-  Email Message, Photograph
-
-** Verifying the database
-
-1. In Visual Studio: **View → SQL Server Object Explorer**
-2. Expand `(localdb)\MSSQLLocalDB → Databases → TracePointDB → Tables`
-3. Tables present: `Cases`, `Suspects`, `Evidences`, `Investigations`
-4. Right-click `Cases → View Data` — you should see the seeded case.
-
----
-
-** 5. Running the API
-
-From the `TracePointAPI` folder:
-
-```bash
-cd TracePointAPI
-dotnet restore
-dotnet build
-dotnet run
-```
-
-The terminal will print something like:
-
-```
-Now listening on: https://localhost:7123
-Now listening on: http://localhost:5123
-```
-
-- API base URL: `https://localhost:7123/api`
-- Swagger UI: `https://localhost:7123/swagger`
-
-
-** 6. Minimum Functional Workflow (Verified)
-
-1. Open the application (`http://localhost:5173`)
-2. Click **START INVESTIGATION** → navigates to `/case`
-3. View the case (loaded from `GET /api/cases/1`)
-4. Click **View Suspects** → `/suspects` (loaded from `GET /api/suspects`)
-5. Click **View Evidence** → `/evidence` (loaded from `GET /api/evidence`)
-6. Click **Examine Evidence** on any card → modal shows full details
-7. Navigate to `/investigation`
-8. Select a suspect from the dropdown
-9. Type a conclusion
-10. Click **SUBMIT INVESTIGATION**
-11. API stores the investigation via EF Core
-12. Success message appears: *"Investigation Submitted Successfully"*
-
----
-
-** 7. Project Structure
-
-```
-├── TracePointAPI/            # ASP.NET Core Web API (backend)
-│   ├── Controllers/          # API controllers
-│   ├── Data/                 # DbContext
-│   ├── Migrations/           # EF Core migrations
-│   ├── Models/               # Domain models
-│   │   └── DTOs/             # Data Transfer Objects
-│   ├── Program.cs
-│   └── appsettings.json
-├── TracePointClient/         # React frontend
-│   ├── src/
-│   │   ├── components/       # Navigation, CaseCard, SuspectCard, EvidenceCard
-│   │   ├── pages/            # Home, Case, Suspects, Evidence, Investigation
-│   │   ├── services/         # Axios API client
-│   │   └── App.jsx
-│   └── package.json
-├── TracePointAPI.Tests/      # xUnit test project
-└── README.md                 # This file
-```
-
-
-** 8. Demonstration Notes
-
-During the demonstration, the following will be shown:
-
-- Starting the ASP.NET Core API (`dotnet run`)
-- Starting the React application (`npm run dev`)
-- Displaying the case, suspects, and evidence
-- Examining a piece of evidence
-- Selecting a suspect and submitting an investigation
-- Confirming the investigation was saved (via Swagger and SQL Server)
-- Demonstrating the Dapper `summary` endpoint
-- Explaining a React component (`EvidenceCard`) and its props/state
-- Explaining the use of EF Core and the Dapper implementation
-- Running `dotnet test` to show the 3 unit tests and 1 integration test
-
-
 
 I declare that this assignment is my own work. AI tools were used only for
 guidance and scaffolding; I fully understand and can explain all code
