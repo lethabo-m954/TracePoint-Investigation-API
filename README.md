@@ -99,62 +99,46 @@ that joins investigations with suspect names.
 | Testing | xUnit (unit + integration) |
 # 4. Project Structure
 
-│
-├── TracePointAPI/                    ← ASP.NET Core Web API (backend)
-│   ├── Controllers/
-│   │   ├── CasesController.cs
-│   │   ├── SuspectsController.cs
-│   │   ├── EvidenceController.cs
-│   │   └── InvestigationsController.cs
-│   ├── Data/
-│   │   └── TracePointContext.cs      ← EF Core DbContext + seed data
-│   ├── Migrations/                   ← EF Core migration files
-│   ├── Models/
-│   │   ├── Case.cs
-│   │   ├── Suspect.cs
-│   │   ├── Evidence.cs
-│   │   ├── Investigation.cs
-│   │   └── DTOs/
-│   │       ├── CreateInvestigationDto.cs
-│   │       └── InvestigationSummaryDto.cs
+├── TracePointAPI/            # ASP.NET Core Web API (backend)
+│   ├── Controllers/          # API controllers
+│   ├── Data/                 # DbContext
+│   ├── Migrations/           # EF Core migrations
+│   ├── Models/               # Domain models
+│   │   └── DTOs/             # Data Transfer Objects
 │   ├── Program.cs
-│   ├── appsettings.json
-│   └── TracePointAPI.csproj
-│
-├── TracePointClient/                 ← React frontend
+│   └── appsettings.json
+├── TracePointClient/         # React frontend
 │   ├── src/
-│   │   ├── components/
-│   │   │   ├── Navigation.jsx
-│   │   │   ├── CaseCard.jsx
-│   │   │   ├── SuspectCard.jsx
-│   │   │   └── EvidenceCard.jsx
-│   │   ├── pages/
-│   │   │   ├── Home.jsx
-│   │   │   ├── CasePage.jsx
-│   │   │   ├── SuspectsPage.jsx
-│   │   │   ├── EvidencePage.jsx
-│   │   │   └── InvestigationPage.jsx
-│   │   ├── services/
-│   │   │   └── api.js
-│   │   ├── App.jsx
-│   │   ├── main.jsx
-│   │   └── styles.css
-│   ├── package.json
-│   └── vite.config.js
-│
-├── TracePointAPI.Tests/              ← xUnit test project
-│   ├── Validation.cs
-│   ├── UnitTests.cs
-│   ├── IntegrationTests.cs
-│   └── TracePointAPI.Tests.csproj
-│
-├── Database/
-│   └── TracePointDB_Create.sql
-│
-└── README.md
-`
+│   │   ├── components/       # Navigation, CaseCard, SuspectCard, EvidenceCard
+│   │   ├── pages/            # Home, Case, Suspects, Evidence, Investigation
+│   │   ├── services/         # Axios API client
+│   │   └── App.jsx
+│   └── package.json
+├── TracePointAPI.Tests/      # xUnit test project
+└── README.md  
 
-# 5. Main Folders
+# 5. Project Structure
+```
+├── TracePointAPI/            # ASP.NET Core Web API (backend)
+│   ├── Controllers/          # API controllers
+│   ├── Data/                 # DbContext
+│   ├── Migrations/           # EF Core migrations
+│   ├── Models/               # Domain models
+│   │   └── DTOs/             # Data Transfer Objects
+│   ├── Program.cs
+│   └── appsettings.json
+├── TracePointClient/         # React frontend
+│   ├── src/
+│   │   ├── components/       # Navigation, CaseCard, SuspectCard, EvidenceCard
+│   │   ├── pages/            # Home, Case, Suspects, Evidence, Investigation
+│   │   ├── services/         # Axios API client
+│   │   └── App.jsx
+│   └── package.json
+├── TracePointAPI.Tests/      # xUnit test project
+└── README.md                 # This file
+```
+
+# 6. Main Folders
 
 # Backend — `TracePointAPI/`
 
@@ -181,7 +165,7 @@ that joins investigations with suspect names.
 | `UnitTests.cs` | 3 unit tests verifying submit-form validation rules. |
 | `IntegrationTests.cs` | 1 integration test posting a real investigation to the in-memory API. |
 
-# 6. Database Design
+# 7. Database Design
 
 # Database engine
 
@@ -239,9 +223,9 @@ API startup via `db.Database.EnsureCreated()`.
 | `Evidences` | 5 | Access log, CCTV, fingerprint, email, photo |
 | `Investigations` | 0 | Populated as the investigator submits |
 
-# 7. Database Entities
+# 8. Database Entities
 
-# 7.1 `Case`
+# 8.1 `Case`
 
 | Property | Type | Description |
 |---|---|---|
@@ -250,7 +234,7 @@ API startup via `db.Database.EnsureCreated()`.
 | `Description` | string | Full case description |
 | `Status` | string | OPEN / CLOSED (defaults to OPEN) |
 
-# 7.2 `Suspect`
+# 8.2 `Suspect`
 
 | Property | Type | Description |
 |---|---|---|
@@ -259,7 +243,7 @@ API startup via `db.Database.EnsureCreated()`.
 | `Occupation` | string | Job title |
 | `Description` | string | Background / context |
 
-# 7.3 `Evidence`
+# 8.3 `Evidence`
 
 | Property | Type | Description |
 |---|---|---|
@@ -268,7 +252,7 @@ API startup via `db.Database.EnsureCreated()`.
 | `Description` | string | Full details |
 | `Location` | string | Where found / stored |
 
-# 7.4 `Investigation`
+# 8.4 `Investigation`
 
 | Property | Type | Description |
 |---|---|---|
@@ -280,7 +264,7 @@ API startup via `db.Database.EnsureCreated()`.
 | `Case` | Case? | Navigation property |
 | `Suspect` | Suspect? | Navigation property |
 
-# 7.5 DTOs
+# 8.5 DTOs
 
 **`CreateInvestigationDto`** — POST input shape:
 
@@ -299,7 +283,7 @@ API startup via `db.Database.EnsureCreated()`.
 | `Conclusion` | string |
 | `DateStarted` | DateTime |
 
-# 8. API Endpoints
+# 9. API Endpoints
 
 Base URL (development): `https://localhost:7XXX/api`
 
