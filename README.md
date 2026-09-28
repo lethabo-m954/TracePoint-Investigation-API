@@ -85,21 +85,16 @@ that joins investigations with suspect names.
 ---
 # 3. Technologies Used
 
-| Layer | Technology | Purpose |
+| Method | Endpoint | Description |
 |---|---|---|
-| Backend Framework | ASP.NET Core Web API (.NET 10) | REST API host |
-| API Controllers | ASP.NET Core Controllers | Request handling |
-| Routing | Attribute-based routing with `:int` constraint | URL matching |
-| Primary ORM | Entity Framework Core | CRUD operations |
-| Alternative Data Access | Dapper | Raw SQL joined query |
-| Database | SQL Server (LocalDB) | Persistent storage |
-| Frontend Framework | React 18 | SPA UI |
-| Build Tool | Vite | Fast React dev server |
-| Frontend Routing | React Router v6 | Client-side navigation |
-| HTTP Client | Axios | Fetch wrapper for the API |
-| Styling | Custom CSS (responsive) | Dark investigation theme |
-| Testing (backend) | xUnit | Unit + integration tests |
-| Testing (integration) | `Microsoft.AspNetCore.Mvc.Testing` | In-memory API host |
+| GET | /api/cases | All cases |
+| GET | /api/cases/{id:int} | Case by ID |
+| GET | /api/suspects | All suspects |
+| GET | /api/suspects/{id:int} | Suspect by ID |
+| GET | /api/evidence | All evidence |
+| GET | /api/evidence/{id:int} | Evidence by ID |
+| POST | /api/investigations | Submit investigation (EF Core) |
+| GET | /api/investigations/summary | Investigations + suspect names (Dapper) |
 
 # 4. Project Structure
 
