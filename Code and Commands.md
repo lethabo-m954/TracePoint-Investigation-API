@@ -691,5 +691,364 @@ src/
 | `services` | API communication |
 | `__tests__` | Frontend tests |
 
+## 15. React API Service
+
+Create: `src/services/api.js`
+
+```javascript
+import axios from 'axios';
+
+const API_BASE_URL = 'https://localhost:7000/api';
+// Change the port to match your API
+
+const api = axios.create({
+    baseURL: API_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
+
+export const getCases = () => api.get('/cases');
+
+export const getCaseById = (id) =>
+    api.get(`/cases/${id}`);
+
+export const getSuspects = () =>
+    api.get('/suspects');
+
+export const getSuspectById = (id) =>
+    api.get(`/suspects/${id}`);
+
+export const getEvidence = () =>
+    api.get('/evidence');
+
+export const getEvidenceById = (id) =>
+    api.get(`/evidence/${id}`);
+
+export const submitInvestigation = (investigation) =>
+    api.post('/investigations', investigation);
+
+export const getInvestigationSummary = () =>
+    api.get('/investigations/summary');
+
+export default api;
+```
+
+> ⚠️ **Important:** Check the URL displayed by Swagger and change `7000` if your API is running on another port.
+
+---
+
+## 16. Home Page
+
+Create: `src/pages/Home.js`
+
+```javascript
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+
+function Home() {
+
+    const navigate = useNavigate();
+
+    return (
+        <div className="text-center">
+
+            <div className="py-5">
+
+                <h1 className="home-title">
+                    TRACEPOINT INVESTIGATIONS
+                </h1>
+
+                <div className="mt-4">
+
+                    <span className="badge bg-danger fs-5">
+                        ACTIVE CASE
+                    </span>
+
+                </div>
+
+                <h2 className="mt-4 display-6">
+                    THE MISSING PROTOTYPE
+                </h2>
+
+                <div className="row justify-content-center mt-4">
+
+                    <div className="col-lg-8 col-md-10">
+
+                        <p className="lead">
+
+                            A prototype has disappeared from
+                            a secure research laboratory.
+
+                            <br />
+
+                            Your task is to investigate the evidence
+                            and identify the most likely suspect.
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <button
+                    className="btn btn-primary btn-lg px-5 py-3 mt-3"
+                    onClick={() => navigate('/case')}
+                >
+                    START INVESTIGATION
+                </button>
+
+            </div>
+
+        </div>
+    );
+}
+
+export default Home;
+```
+
+---
+
+## 17. Navigation Component
+
+Create: `src/components/Navigation.js`
+
+*Note: The final version includes a mobile hamburger menu.*
+
+```javascript
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+function Navigation() {
+
+    const [isNavCollapsed, setIsNavCollapsed] =
+        useState(true);
+
+    const handleNavToggle = () => {
+        setIsNavCollapsed(!isNavCollapsed);
+    };
+
+    return (
+
+        <nav className="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+
+            <div className="container">
+
+                <Link
+                    className="navbar-brand fw-bold"
+                    to="/"
+                >
+                    TracePoint
+                </Link>
+
+                <button
+                    className="navbar-toggler"
+                    type="button"
+                    onClick={handleNavToggle}
+                    aria-controls="navbarNav"
+                    aria-expanded={!isNavCollapsed}
+                    aria-label="Toggle navigation"
+                >
+
+                    <span className="navbar-toggler-icon"></span>
+
+                </button>
+
+                <div
+                    className={`${isNavCollapsed ? 'collapse' : ''} navbar-collapse`}
+                    id="navbarNav"
+                >
+
+                    <ul className="navbar-nav ms-auto">
+
+                        <li className="nav-item">
+
+                            <Link
+                                className="nav-link"
+                                to="/"
+                                onClick={() =>
+                                    setIsNavCollapsed(true)
+                                }
+                            >
+                                HOME
+                            </Link>
+
+                        </li>
+
+                        <li className="nav-item">
+
+                            <Link
+                                className="nav-link"
+                                to="/case"
+                                onClick={() =>
+                                    setIsNavCollapsed(true)
+                                }
+                            >
+                                CASE
+                            </Link>
+
+                        </li>
+
+                        <li className="nav-item">
+
+                            <Link
+                                className="nav-link"
+                                to="/suspects"
+                                onClick={() =>
+                                    setIsNavCollapsed(true)
+                                }
+                            >
+                                SUSPECTS
+                            </Link>
+
+                        </li>
+
+                        <li className="nav-item">
+
+                            <Link
+                                className="nav-link"
+                                to="/evidence"
+                                onClick={() =>
+                                    setIsNavCollapsed(true)
+                                }
+                            >
+                                EVIDENCE
+                            </Link>
+
+                        </li>
+
+                        <li className="nav-item">
+
+                            <Link
+                                className="nav-link"
+                                to="/investigation"
+                                onClick={() =>
+                                    setIsNavCollapsed(true)
+                                }
+                            >
+                                INVESTIGATION
+                            </Link>
+
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </nav>
+    );
+}
+
+export default Navigation;
+```
+
+---
+
+## 18. App.js and Routing
+
+*Note: The final App.js includes the navigation, responsive styling, and footer.*
+
+Create/update: `src/App.js`
+
+```javascript
+import React from 'react';
+
+import {
+    BrowserRouter as Router,
+    Routes,
+    Route
+} from 'react-router-dom';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import './App.css';
+
+import Navigation from './components/Navigation';
+
+import Footer from './components/Footer';
+
+import Home from './pages/Home';
+
+import CasePage from './pages/CasePage';
+
+import SuspectsPage from './pages/SuspectsPage';
+
+import EvidencePage from './pages/EvidencePage';
+
+import InvestigationPage from './pages/InvestigationPage';
+
+function App() {
+
+    return (
+
+        <Router>
+
+            <Navigation />
+
+            <main className="container mt-4">
+
+                <Routes>
+
+                    <Route
+                        path="/"
+                        element={<Home />}
+                    />
+
+                    <Route
+                        path="/case"
+                        element={<CasePage />}
+                    />
+
+                    <Route
+                        path="/suspects"
+                        element={<SuspectsPage />}
+                    />
+
+                    <Route
+                        path="/evidence"
+                        element={<EvidencePage />}
+                    />
+
+                    <Route
+                        path="/investigation"
+                        element={<InvestigationPage />}
+                    />
+
+                </Routes>
+
+            </main>
+
+            <Footer />
+
+        </Router>
+    );
+}
+
+export default App;
+```
+
+---
+
+## 19. Case Card
+
+Create: `src/components/CaseCard.js`
+
+```javascript
+import React from 'react';
+
+function CaseCard({ caseData }) {
+
+    if (!caseData) {
+
+        return (
+            <div className="alert alert-warning">
+                No case data available
+            </div>
+        );
+    }
+}
+```
 
 
