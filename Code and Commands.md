@@ -1050,5 +1050,477 @@ function CaseCard({ caseData }) {
     }
 }
 ```
+## 20. Case Page
+
+Create/update: `src/pages/CasePage.js`
+
+```javascript
+import React, {
+    useState,
+    useEffect
+} from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
+import { getCases } from '../services/api';
+
+import CaseCard from '../components/CaseCard';
+
+function CasePage() {
+
+    const [caseData, setCaseData] =
+        useState(null);
+
+    const [loading, setLoading] =
+        useState(true);
+
+    const [error, setError] =
+        useState(null);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+
+        const fetchCase = async () => {
+
+            try {
+
+                const response = await getCases();
+
+                // Assuming the first case is the active case
+                if (
+                    response.data &&
+                    response.data.length > 0
+                ) {
+
+                    setCaseData(response.data[0]);
+
+                } else {
+
+                    setError('No case found');
+
+                }
+
+            } catch (err) {
+
+                setError(
+                    'Failed to load case data. Please ensure the API is running.'
+                );
+
+                console.error(
+                    'Error fetching case:',
+                    err
+                );
+
+            } finally {
+
+                setLoading(false);
+
+            }
+        };
+
+        fetchCase();
+
+    }, []);
+
+    if (loading) {
+
+        return (
+
+            <div className="text-center mt-5">
+
+                <div
+                    className="spinner-border text-primary"
+                    role="status"
+                >
+
+                    <span className="visually-hidden">
+                        Loading...
+                    </span>
+
+                </div>
+
+                <p className="mt-2">
+                    Loading case data...
+                </p>
+
+            </div>
+        );
+    }
+
+    if (error) {
+
+        return (
+
+            <div
+                className="alert alert-danger mt-3"
+                role="alert"
+            >
+                {error}
+            </div>
+        );
+    }
+
+    return (
+
+        <div>
+
+            <h2 className="text-center mb-4">
+                Case Details
+            </h2>
+
+            <CaseCard caseData={caseData} />
+
+            <div className="d-flex justify-content-center gap-3 mt-4">
+
+                <button
+                    className="btn btn-primary btn-lg"
+                    onClick={() =>
+                        navigate('/suspects')
+                    }
+                >
+                    View Suspects
+                </button>
+
+                <button
+                    className="btn btn-secondary btn-lg"
+                    onClick={() =>
+                        navigate('/evidence')
+                    }
+                >
+                    View Evidence
+                </button>
+
+            </div>
+
+        </div>
+    );
+}
+
+export default CasePage;
+```
+
+---
+
+## 21. Suspect Card
+
+Create: `src/components/SuspectCard.js`
+
+```javascript
+import React from 'react';
+
+function SuspectCard({
+    suspect,
+    onSelect,
+    isSelected
+}) {
+
+    return (
+
+        <div
+            className={`card h-100 shadow-sm ${
+                isSelected
+                    ? 'border-primary border-3'
+                    : ''
+            }`}
+            onClick={() => onSelect(suspect)}
+            style={{ cursor: 'pointer' }}
+        >
+
+            <div className="card-body">
+
+                <h5 className="card-title">
+                    {suspect.name}
+                </h5>
+
+                <h6 className="card-subtitle mb-2 text-muted">
+                    {suspect.occupation}
+                </h6>
+
+                <p className="card-text">
+                    {suspect.description}
+                </p>
+
+                {isSelected && (
+
+                    <span className="badge bg-primary">
+                        Selected
+                    </span>
+
+                )}
+
+            </div>
+
+        </div>
+    );
+}
+
+export default SuspectCard;
+```
+
+---
+
+## 22. Suspects Page
+
+Create/update: `src/pages/SuspectsPage.js`
+
+```javascript
+import React, {
+    useState,
+    useEffect
+} from 'react';
+
+import { getSuspects } from '../services/api';
+
+import SuspectCard from '../components/SuspectCard';
+
+function SuspectsPage() {
+
+    const [suspects, setSuspects] =
+        useState([]);
+
+    const [loading, setLoading] =
+        useState(true);
+
+    const [error, setError] =
+        useState(null);
+
+    const [selectedSuspect, setSelectedSuspect] =
+        useState(null);
+
+    useEffect(() => {
+
+        const fetchSuspects = async () => {
+
+            try {
+
+                const response =
+                    await getSuspects();
+
+                setSuspects(response.data);
+
+            } catch (err) {
+
+                setError(
+                    'Failed to load suspects. Please ensure the API is running.'
+                );
+
+                console.error(
+                    'Error fetching suspects:',
+                    err
+                );
+
+            } finally {
+
+                setLoading(false);
+
+            }
+        };
+
+        fetchSuspects();
+
+    }, []);
+
+    const handleSelectSuspect = (suspect) => {
+
+        setSelectedSuspect(suspect);
+
+    };
+
+    if (loading) {
+
+        return (
+
+            <div className="text-center mt-5">
+
+                <div
+                    className="spinner-border text-primary"
+                    role="status"
+                >
+
+                    <span className="visually-hidden">
+                        Loading...
+                    </span>
+
+                </div>
+
+                <p className="mt-2">
+                    Loading suspects...
+                </p>
+
+            </div>
+        );
+    }
+
+    if (error) {
+
+        return (
+
+            <div
+                className="alert alert-danger mt-3"
+                role="alert"
+            >
+                {error}
+            </div>
+        );
+    }
+
+    return (
+
+        <div>
+
+            <h2 className="text-center mb-4">
+                Suspects
+            </h2>
+
+            {selectedSuspect && (
+
+                <div className="alert alert-info">
+
+                    <strong>
+                        Selected Suspect:
+                    </strong>{' '}
+
+                    {selectedSuspect.name}
+
+                    <button
+                        className="btn btn-sm btn-outline-secondary ms-3"
+                        onClick={() =>
+                            setSelectedSuspect(null)
+                        }
+                    >
+                        Clear Selection
+                    </button>
+
+                </div>
+
+            )}
+
+            <div className="row row-cols-1 row-cols-md-3 g-4">
+
+                {suspects.map((suspect) => (
+
+                    <div
+                        className="col"
+                        key={suspect.suspectID}
+                    >
+
+                        <SuspectCard
+                            suspect={suspect}
+                            onSelect={handleSelectSuspect}
+                            isSelected={
+                                selectedSuspect?.suspectID ===
+                                suspect.suspectID
+                            }
+                        />
+
+                    </div>
+
+                ))}
+
+            </div>
+
+            <div className="text-center mt-4">
+
+                <button
+                    className="btn btn-primary"
+                    onClick={() =>
+                        window.location.href =
+                            '/investigation'
+                    }
+                >
+                    Proceed to Investigation
+                </button>
+
+            </div>
+
+        </div>
+    );
+}
+
+export default SuspectsPage;
+```
+
+---
+
+## 23. Evidence Card
+
+Create: `src/components/EvidenceCard.js`
+
+```javascript
+import React, { useState } from 'react';
+
+function EvidenceCard({
+    evidence,
+    onExamine
+}) {
+
+    const [isExpanded, setIsExpanded] =
+        useState(false);
+
+    const handleExamine = () => {
+
+        setIsExpanded(!isExpanded);
+
+        if (onExamine) {
+
+            onExamine(evidence);
+
+        }
+    };
+
+    return (
+
+        <div className="card h-100 shadow-sm">
+
+            <div className="card-body">
+
+                <h5 className="card-title">
+{evidence.title}
+                </h5>
+
+                <p className="card-text text-muted">
+
+                    <small>
+                        Location: {evidence.location}
+                    </small>
+
+                </p>
+
+                {isExpanded && (
+
+                    <div className="mt-3 p-3 bg-light rounded">
+
+                        <h6>
+                            Evidence Details
+                        </h6>
+
+                        <p>
+                            {evidence.description}
+                        </p>
+
+                    </div>
+
+                )}
+
+                <button
+                    className="btn btn-outline-primary mt-2"
+                    onClick={handleExamine}
+                >
+                    {
+                        isExpanded
+                            ? 'Hide Evidence'
+                            : 'Examine Evidence'
+                    }
+                </button>
+
+            </div>
+
+        </div>
+    );
+}
+
+export default EvidenceCard;
+```
 
 
