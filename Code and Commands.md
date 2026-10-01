@@ -2466,5 +2466,63 @@ describe(
                 fireEvent.change(select, { target: { value: '1' } });
 
                 const textarea = screen.getByLabelText('Investigation Conclusion');
-                fireEvent.change(textarea, { target: { value: 'This
+  fireEvent.change(
+                    textarea,
+                    {
+                        target: {
+                            value:
+                                'This is a valid conclusion.'
+                        }
+                    }
+                );
+
+                const submitButton =
+                    screen.getByText(
+                        'SUBMIT INVESTIGATION'
+                    );
+
+                fireEvent.click(
+                    submitButton
+                );
+
+                await waitFor(() => {
+
+                    expect(
+                        submitInvestigation
+                    ).toHaveBeenCalled();
+
+                    expect(
+                        submitInvestigation
+                    ).toHaveBeenCalledWith(
+
+                        expect.objectContaining({
+
+                            caseID: 1,
+
+                            suspectID: 1,
+
+                            conclusion:
+                                'This is a valid conclusion.'
+
+                        })
+
+                    );
+
+                });
+
+                const successMessage =
+                    await screen.findByText(
+                        'Investigation Submitted Successfully'
+                    );
+
+                expect(
+                    successMessage
+                ).toBeInTheDocument();
+
+            }
+        );
+
+    }
+);
+               
 ```
