@@ -1522,5 +1522,949 @@ function EvidenceCard({
 
 export default EvidenceCard;
 ```
+## 24. Evidence Page
+Create/update: `src/pages/EvidencePage.js`
 
+```javascript
+import React, {
+    useState,
+    useEffect
+} from 'react';
 
+import { getEvidence } from '../services/api';
+
+import EvidenceCard
+    from '../components/EvidenceCard';
+
+function EvidencePage() {
+
+    const [evidence, setEvidence] =
+        useState([]);
+
+    const [loading, setLoading] =
+        useState(true);
+
+    const [error, setError] =
+        useState(null);
+
+    const [selectedEvidence, setSelectedEvidence] =
+        useState(null);
+
+    useEffect(() => {
+
+        const fetchEvidence = async () => {
+
+            try {
+
+                const response =
+                    await getEvidence();
+
+                setEvidence(response.data);
+
+            } catch (err) {
+
+                setError(
+                    'Failed to load evidence. Please ensure the API is running.'
+                );
+
+                console.error(
+                    'Error fetching evidence:',
+                    err
+                );
+
+            } finally {
+
+                setLoading(false);
+
+            }
+        };
+
+        fetchEvidence();
+
+    }, []);
+
+    const handleExamineEvidence =
+        (evidenceItem) => {
+
+            setSelectedEvidence(
+                evidenceItem
+            );
+
+        };
+
+    if (loading) {
+
+        return (
+
+            <div className="text-center mt-5">
+
+                <div
+                    className="spinner-border text-primary"
+                    role="status"
+                >
+
+                    <span className="visually-hidden">
+                        Loading...
+                    </span>
+
+                </div>
+
+                <p className="mt-2">
+                    Loading evidence...
+                </p>
+
+            </div>
+        );
+    }
+
+    if (error) {
+
+        return (
+
+            <div
+                className="alert alert-danger mt-3"
+                role="alert"
+            >
+                {error}
+            </div>
+        );
+    }
+
+    return (
+
+        <div>
+
+            <h2 className="text-center mb-4">
+                Evidence
+            </h2>
+
+            {selectedEvidence && (
+
+                <div className="alert alert-info">
+
+                    <strong>
+                        Currently Examining:
+                    </strong>{' '}
+
+                    {selectedEvidence.title}
+
+                    <br />
+
+                    <small>
+                        {selectedEvidence.description}
+                    </small>
+
+                    <button
+                        className="btn btn-sm btn-outline-secondary ms-3"
+                        onClick={() =>
+                            setSelectedEvidence(null)
+                        }
+                    >
+                        Clear Selection
+                    </button>
+
+                </div>
+
+            )}
+
+            <div className="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+
+                {evidence.map((item) => (
+
+                    <div
+                        className="col"
+                        key={item.evidenceID}
+                    >
+
+                        <EvidenceCard
+                            evidence={item}
+                            onExamine={
+                                handleExamineEvidence
+                            }
+                        />
+
+                    </div>
+
+                ))}
+
+            </div>
+
+            <div className="text-center mt-4">
+
+                <button
+                    className="btn btn-success"
+                    onClick={() =>
+                        window.location.href =
+                            '/investigation'
+                    }
+                >
+                    Proceed to Investigation
+                </button>
+
+            </div>
+
+        </div>
+    );
+}
+
+export default EvidencePage;
+```
+## 25.Investigation Page
+Create/update: `src/pages/InvestigationPage.js`
+
+```javascript
+import React, {
+    useState,
+    useEffect
+} from 'react';
+
+import { useNavigate } from 'react-router-dom';
+
+import {
+    getSuspects,
+    submitInvestigation
+} from '../services/api';
+
+function InvestigationPage() {
+
+    const [suspects, setSuspects] =
+        useState([]);
+
+    const [selectedSuspectId, setSelectedSuspectId] =
+        useState('');
+
+    const [conclusion, setConclusion] =
+        useState('');
+
+    const [loading, setLoading] =
+        useState(false);
+
+    const [submitted, setSubmitted] =
+        useState(false);
+
+    const [error, setError] =
+        useState(null);
+
+    const [validationError, setValidationError] =
+        useState('');
+
+    const navigate = useNavigate();
+
+    // Fetch suspects when page loads
+    useEffect(() => {
+
+        const fetchSuspects = async () => {
+
+            try {
+
+                const response =
+                    await getSuspects();
+
+                setSuspects(response.data);
+
+            } catch (err) {
+
+                setError(
+                    'Failed to load suspects. Please ensure the API is running.'
+                );
+
+                console.error(
+                    'Error fetching suspects:',
+                    err
+                );
+
+            }
+        };
+
+        fetchSuspects();
+
+    }, []);
+
+    const handleSubmit = async (e) => {
+
+        e.preventDefault();
+
+        setValidationError('');
+
+        // Validation: Check if suspect is selected
+        if (!selectedSuspectId) {
+
+            setValidationError(
+                'Please select a suspect.'
+            );
+
+            return;
+        }
+
+        // Validation: Check if conclusion is entered
+        if (!conclusion.trim()) {
+
+            setValidationError(
+                'Please enter your investigation conclusion.'
+            );
+
+            return;
+        }
+
+        setLoading(true);
+
+        try {
+
+            const investigationData = {
+
+                caseID: 1,
+
+                suspectID:
+                    parseInt(selectedSuspectId),
+
+                conclusion:
+                    conclusion.trim(),
+
+                dateStarted:
+                    new Date().toISOString()
+
+            };
+
+            const response =
+                await submitInvestigation(
+                    investigationData
+                );
+
+            console.log(
+                'Investigation submitted:',
+                response.data
+            );
+
+            setSubmitted(true);
+
+            setLoading(false);
+
+        } catch (err) {
+
+            setError(
+                'Failed to submit investigation. Please try again.'
+            );
+
+            console.error(
+                'Error submitting investigation:',
+                err
+            );
+
+            setLoading(false);
+        }
+    };
+
+    const handleReset = () => {
+
+        setSelectedSuspectId('');
+
+        setConclusion('');
+
+        setSubmitted(false);
+
+        setError(null);
+
+        setValidationError('');
+    };
+
+    if (submitted) {
+
+        return (
+
+            <div className="text-center mt-5">
+
+                <div
+                    className="alert alert-success"
+                    role="alert"
+                >
+
+                    <h4 className="alert-heading">
+                        Investigation Submitted Successfully
+                    </h4>
+
+                    <p>
+                        Your investigation has been
+                        recorded by TracePoint Investigations.
+                    </p>
+
+                    <hr />
+
+                    <p className="mb-0">
+
+                        <strong>
+                            Selected Suspect:
+                        </strong>{' '}
+
+                        {
+                            suspects.find(
+                                s =>
+                                    s.suspectID ===
+                                    parseInt(selectedSuspectId)
+                            )?.name
+                        }
+
+                    </p>
+
+                    <p className="mb-3">
+
+                        <strong>
+                            Conclusion:
+                        </strong>{' '}
+
+                        {conclusion}
+
+                    </p>
+
+                    <button
+                        className="btn btn-primary"
+                        onClick={handleReset}
+                    >
+                        Start New Investigation
+                    </button>
+
+                </div>
+
+            </div>
+        );
+    }
+
+    if (error) {
+
+        return (
+
+            <div
+                className="alert alert-danger mt-3"
+                role="alert"
+            >
+
+                {error}
+
+                <button
+                    className="btn btn-sm btn-outline-danger ms-3"
+                    onClick={() => setError(null)}
+                >
+                    Dismiss
+                </button>
+
+            </div>
+        );
+    }
+
+    return (
+
+        <div>
+
+            <h2 className="text-center mb-4">
+                Submit Investigation
+            </h2>
+
+            {validationError && (
+
+                <div
+                    className="alert alert-warning"
+                    role="alert"
+                >
+                    {validationError}
+                </div>
+
+            )}
+
+            <form onSubmit={handleSubmit}>
+
+                {/* Suspect Selection */}
+
+                <div className="mb-4">
+
+                    <label
+                        htmlFor="suspectSelect"
+                        className="form-label fw-bold"
+                    >
+                        Select Suspect
+                    </label>
+
+                    <select
+                        id="suspectSelect"
+                        className="form-select form-select-lg"
+                        value={selectedSuspectId}
+                        onChange={(e) =>
+                            setSelectedSuspectId(
+                                e.target.value
+                            )
+                        }
+                    >
+
+                        <option value="">
+                            -- Select a suspect --
+                        </option>
+
+                        {suspects.map((suspect) => (
+
+                            <option
+                                key={suspect.suspectID}
+                                value={suspect.suspectID}
+                            >
+                                {suspect.name} -
+                                {' '}
+                                {suspect.occupation}
+                            </option>
+
+                        ))}
+
+                    </select>
+
+                    {selectedSuspectId && (
+
+                        <div className="mt-2 text-success">
+
+                            <small>
+                                Selected:{' '}
+
+                                {
+                                    suspects.find(
+                                        s =>
+                                            s.suspectID ===
+                                            parseInt(
+                                                selectedSuspectId
+                                            )
+                                    )?.name
+                                }
+
+                            </small>
+
+                        </div>
+
+                    )}
+
+                </div>
+
+                {/* Conclusion Text Area */}
+
+                <div className="mb-4">
+
+                    <label
+                        htmlFor="conclusionText"
+                        className="form-label fw-bold"
+                    >
+                        Investigation Conclusion
+                    </label>
+
+                    <textarea
+                        id="conclusionText"
+                        className="form-control"
+                        rows="5"
+                        placeholder="Explain your conclusion. Example: Jamie Smith appears to be the most likely suspect because his access card was used to enter the laboratory shortly before the prototype disappeared."
+                        value={conclusion}
+                        onChange={(e) =>
+                            setConclusion(
+                                e.target.value
+                            )
+                        }
+                    ></textarea>
+
+                    <div className="mt-1 text-muted">
+
+                        <small>
+                            {conclusion.length}
+                            {' '}
+                            characters
+                        </small>
+
+                    </div>
+
+                </div>
+
+                {/* Submit Button */}
+
+                <div className="d-flex gap-3">
+
+                    <button
+                        type="submit"
+                        className="btn btn-success btn-lg flex-grow-1"
+                        disabled={loading}
+                    >
+
+                        {loading ? (
+
+                            <>
+
+                                <span
+                                    className="spinner-border spinner-border-sm me-2"
+                                    role="status"
+                                ></span>
+
+                                Submitting...
+
+                            </>
+
+                        ) : (
+
+                            'SUBMIT INVESTIGATION'
+
+                        )}
+
+                    </button>
+
+                    <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() =>
+                            navigate('/case')
+                        }
+                    >
+                        Cancel
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    );
+}
+
+export default InvestigationPage;
+```
+
+## 26. Footer Component
+Create: `src/components/Footer.js`
+
+```javascript
+import React from 'react';
+
+function Footer() {
+
+    return (
+
+        <footer className="footer mt-5">
+
+            <div className="container">
+
+                <p className="mb-0">
+
+                    &copy; {new Date().getFullYear()}
+                    {' '}
+                    TracePoint Investigations.
+                    All rights reserved.
+
+                </p>
+
+                <small className="text-muted">
+
+                    Operation Digital Detective -
+                    Full Stack Web Application
+
+                </small>
+
+            </div>
+
+        </footer>
+    );
+}
+
+export default Footer;
+```
+
+## 27. Custom CSS
+
+Create: `src/App.css`
+
+```css
+/* Global Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+}
+
+/* Container padding for mobile */
+.container {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Card hover effects */
+.card {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Home page styling */
+.home-title {
+    font-size: 3.5rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+@media (max-width: 768px) {
+    .home-title {
+        font-size: 2.2rem;
+    }
+}
+
+/* Evidence card expand animation */
+.evidence-details {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status badges */
+.badge-status {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+}
+
+/* Responsive button groups */
+.btn-group-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+}
+
+@media (max-width: 576px) {
+    .btn-group-responsive .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+}
+
+/* Form styling */
+textarea.form-control {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Success message animation */
+.success-alert {
+    animation: slideDown 0.5s ease-in-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Footer */
+.footer {
+    margin-top: 50px;
+    padding: 20px 0;
+    background-color: #1a1a2e;
+    color: #fff;
+    text-align: center;
+}
+
+/* Mobile card adjustments */
+@media (max-width: 576px) {
+    .card-body {
+        padding: 1rem;
+    }
+    .card-title {
+        font-size: 1.1rem;
+    }
+    .display-3 {
+        font-size: 2.5rem;
+    }
+}
+
+/* Tablet adjustments */
+@media (min-width: 768px) and (max-width: 992px) {
+    .container {
+        max-width: 720px;
+    }
+    .row-cols-md-3 > .col {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+}
+```
+
+---
+
+## 28. Import CSS in App.js
+
+At the top of `App.js`, include:
+
+```javascript
+import './App.css';
+```
+
+---
+
+## 29. Testing Packages
+
+### 29.1 Frontend Testing Packages
+Open a terminal inside `tracepoint-client` and run:
+
+```bash
+npm install --save-dev @testing-library/user-event @testing-library/jest-dom
+```
+
+### 29.2 Backend Testing Packages
+Create an xUnit test project named `TracePointAPI.Tests` and install the following packages:
+
+```powershell
+Install-Package Microsoft.EntityFrameworkCore.InMemory
+Install-Package Microsoft.AspNetCore.Mvc.Testing
+Install-Package System.Net.Http.Json
+```
+
+---
+
+## 30. Frontend Unit Tests
+
+Create: `src/__tests__/InvestigationForm.test.js`
+
+```javascript
+import React from 'react';
+
+import {
+    render,
+    screen,
+    fireEvent,
+    waitFor
+} from '@testing-library/react';
+
+import {
+    BrowserRouter
+} from 'react-router-dom';
+
+import {
+    getSuspects,
+    submitInvestigation
+} from '../services/api';
+
+import InvestigationPage
+    from '../pages/InvestigationPage';
+
+jest.mock('../services/api');
+
+const mockSuspects = [
+    {
+        suspectID: 1,
+        name: 'Alex Morgan',
+        occupation: 'Software Developer',
+        description: 'Test description'
+    },
+    {
+        suspectID: 2,
+        name: 'Jamie Smith',
+        occupation: 'Security Officer',
+        description: 'Test description'
+    },
+    {
+        suspectID: 3,
+        name: 'Taylor Williams',
+        occupation: 'Research Assistant',
+        description: 'Test description'
+    }
+];
+
+describe(
+    'Investigation Form Unit Tests',
+    () => {
+
+        beforeEach(() => {
+            jest.clearAllMocks();
+
+            getSuspects.mockResolvedValue({
+                data: mockSuspects
+            });
+
+            submitInvestigation.mockResolvedValue({
+                data: {
+                    investigationID: 1
+                }
+            });
+        });
+
+        test(
+            'shows validation error when no suspect is selected',
+            async () => {
+                render(
+                    <BrowserRouter>
+                        <InvestigationPage />
+                    </BrowserRouter>
+                );
+
+                await waitFor(() => {
+                    expect(getSuspects).toHaveBeenCalled();
+                });
+
+                const submitButton = screen.getByText('SUBMIT INVESTIGATION');
+                fireEvent.click(submitButton);
+
+                const errorMessage = await screen.findByText('Please select a suspect.');
+                expect(errorMessage).toBeInTheDocument();
+                expect(submitInvestigation).not.toHaveBeenCalled();
+            }
+        );
+
+        test(
+            'shows validation error when conclusion is empty',
+            async () => {
+                render(
+                    <BrowserRouter>
+                        <InvestigationPage />
+                    </BrowserRouter>
+                );
+
+                await waitFor(() => {
+                    expect(getSuspects).toHaveBeenCalled();
+                });
+
+                const select = screen.getByLabelText('Select Suspect');
+                fireEvent.change(select, { target: { value: '1' } });
+
+                const submitButton = screen.getByText('SUBMIT INVESTIGATION');
+                fireEvent.click(submitButton);
+
+                const errorMessage = await screen.findByText('Please enter your investigation conclusion.');
+                expect(errorMessage).toBeInTheDocument();
+                expect(submitInvestigation).not.toHaveBeenCalled();
+            }
+        );
+
+        test(
+            'successfully submits investigation when all fields are valid',
+            async () => {
+                render(
+                    <BrowserRouter>
+                        <InvestigationPage />
+                    </BrowserRouter>
+                );
+
+                await waitFor(() => {
+                    expect(getSuspects).toHaveBeenCalled();
+                });
+
+                const select = screen.getByLabelText('Select Suspect');
+                fireEvent.change(select, { target: { value: '1' } });
+
+                const textarea = screen.getByLabelText('Investigation Conclusion');
+                fireEvent.change(textarea, { target: { value: 'This
+```
