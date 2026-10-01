@@ -128,8 +128,8 @@ namespace TracePointAPI.Models
 
 ## 5. Database Setup
 
-Create a folder called: 'Data'
-Create: 'ApplicationDbContext.cs'
+Create a folder called: `Data`
+Create: `ApplicationDbContext.cs`
 
 ### 5.1 ApplicationDbContext.cs
 
