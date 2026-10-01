@@ -409,7 +409,7 @@ namespace TracePointAPI.Controllers
 ```
 
 ### 9.2 SuspectController.cs
-Create: 'Controllers/SuspectsController.cs`
+Create: `Controllers/SuspectsController.cs`
 
 ```bash
 using Microsoft.AspNetCore.Mvc;
@@ -605,6 +605,91 @@ namespace TracePointAPI.Controllers
 | GET | `/api/evidence/{id:int}` | Get evidence by ID |
 | POST | `/api/investigations` | Submit a new investigation |
 | GET | `/api/investigations/summary` | Get investigations with suspect names using Dapper |
+
+## 11. Run the API
+
+### Option 1: From Visual Studio
+1. Open `TracePointInvestigations.sln`.
+2. Set `TracePointAPI` as the startup project.
+3. Press `F5`.
+4. Swagger will open in your browser.
+
+**Example:**
+`https://localhost:7000/swagger`
+The port may be different on your computer
+
+*Note: The port may be different on your computer.*
+
+### Option 2: From Command Line
+```bash
+cd TracePointAPI
+dotnet restore
+dotnet run
+```
+
+---
+
+## 12. Create the React Application
+
+1. Open **Command Prompt** or **Terminal**.
+2. Navigate to your project folder:
+   ```cmd
+   cd C:\YourProjects\TracePointInvestigations
+   ```
+3. Create the React application:
+   ```bash
+   npx create-react-app tracepoint-client
+   ```
+4. Navigate into the React application:
+   ```bash
+   cd tracepoint-client
+   ```
+
+---
+
+## 13. Install React Packages
+
+1. Install **React Router**:
+   ```bash
+   npm install react-router-dom
+   ```
+2. Install **Axios**:
+   ```bash
+   npm install axios
+   ```
+3. Install **Bootstrap**:
+   ```bash
+   npm install bootstrap
+   ```
+4. Start the React application:
+   ```bash
+   npm start
+   ```
+
+The application will run at: `http://localhost:3000`
+
+---
+
+## 14. React Project Structure
+
+Inside `src`, create the following structure:
+
+```text
+src/
+├── components/
+├── pages/
+├── services/
+└── __tests__/
+```
+
+### Folder Purposes
+
+| Folder | Purpose |
+| :--- | :--- |
+| `components` | Reusable React components |
+| `pages` | Application pages |
+| `services` | API communication |
+| `__tests__` | Frontend tests |
 
 
 
