@@ -146,8 +146,11 @@ On the Case Page, confirm the following data loads from the API:
 - **Status:** Open
 
 Click the navigation buttons to **Suspects** and **Evidence**.
-**Expected:** Navigation succeeds without errors.
+
 <img width="1906" height="833" alt="Screenshot 2026-10-07 232013" src="https://github.com/user-attachments/assets/9117f33b-fb3e-4c62-a7eb-eaa895bc7fbd" />
+
+**Expected:** Navigation succeeds without errors.
+
 ---
 
 ## 7. Step 4 — Suspects Page Validation
@@ -157,6 +160,7 @@ Confirm the suspects list loads correctly:
 - Alex Morgan (Software Developer)
 - Jamie Smith (Security Officer)
 - Taylor Williams (Research Assistant)
+<img width="1893" height="1029" alt="Screenshot 2026-10-07 232048" src="https://github.com/user-attachments/assets/ef3ef1eb-f9b8-4b7c-9c14-c81205a26cae" />
 
 ---
 
@@ -169,6 +173,7 @@ Confirm the following evidence items load:
 - Fingerprint Report
 - Email Message
 - Photograph
+<img width="1911" height="975" alt="Screenshot 2026-10-07 232112" src="https://github.com/user-attachments/assets/1d427ad6-477d-4995-ab33-38b8fb148d83" />
 
 ---
 
@@ -179,6 +184,7 @@ Confirm the following evidence items load:
    - Select **Suspect ID**
    - Enter a **Conclusion**
 2. Click **Submit**.
+<img width="1874" height="934" alt="Screenshot 2026-10-07 232354" src="https://github.com/user-attachments/assets/b31f5e63-5da9-4faa-bfb1-2ffeefcbc951" />
 
 **Expected:** A POST request is sent to `/api/investigations` and
 returns HTTP **201 Created**.
