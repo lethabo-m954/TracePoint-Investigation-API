@@ -353,14 +353,3 @@ The following testing activities have been completed:
 | SSL certificate warning                        | Run `dotnet dev-certs https --trust` once and restart the API           |
 
 ---
-
-## 19. Submission Evidence
-
-For the final submission, provide:
-
-- A screenshot of Swagger showing `GET /api/cases` returning 200 OK.
-- A screenshot of the Home Page in the browser.
-- A screenshot of the Suspects and Evidence pages.
-- A screenshot of a submitted investigation appearing in the summary.
-- A screenshot of `npm test` (or `dotnet test`) showing all tests
-  passing.
