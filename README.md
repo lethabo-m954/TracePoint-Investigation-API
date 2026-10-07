@@ -100,6 +100,7 @@ that joins investigations with suspect names.
 
 # 4. Project Structure
 
+```text
 ├── TracePointAPI/            # ASP.NET Core Web API (backend)
 │   ├── Controllers/          # API controllers
 │   ├── Data/                 # DbContext
@@ -116,7 +117,8 @@ that joins investigations with suspect names.
 │   │   └── App.jsx
 │   └── package.json
 ├── TracePointAPI.Tests/      # xUnit test project
-└── README.md  
+└── README.md
+```
 
 # 5. Main Folders
 
