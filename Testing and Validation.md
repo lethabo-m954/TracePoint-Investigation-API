@@ -1,3 +1,5 @@
+
+
 # TracePoint — Testing and Validation Guide
 
 This document describes how the TracePoint system (ASP.NET Core API +
@@ -114,6 +116,7 @@ endpoint using the **Try it out → Execute** button.
 | `GET /api/investigations/summary`     | Returns empty list or existing investigations       |
 
 A successful response is HTTP **200 OK** with a JSON body.
+<img width="1376" height="467" alt="Screenshot 2026-10-07 232526" src="https://github.com/user-attachments/assets/0692d345-e686-4df7-8cfc-985b0e25f0f4" />
 
 ---
 
@@ -127,7 +130,10 @@ A successful response is HTTP **200 OK** with a JSON body.
 
 3. Click **START INVESTIGATION**.
 
+<img width="1856" height="976" alt="Screenshot 2026-10-07 231925" src="https://github.com/user-attachments/assets/391fd271-e5dd-46ad-a4f9-13dc6262248d" />
+
 **Expected:** The app navigates to the Case Page.
+
 
 ---
 
@@ -141,7 +147,7 @@ On the Case Page, confirm the following data loads from the API:
 
 Click the navigation buttons to **Suspects** and **Evidence**.
 **Expected:** Navigation succeeds without errors.
-
+<img width="1906" height="833" alt="Screenshot 2026-10-07 232013" src="https://github.com/user-attachments/assets/9117f33b-fb3e-4c62-a7eb-eaa895bc7fbd" />
 ---
 
 ## 7. Step 4 — Suspects Page Validation
