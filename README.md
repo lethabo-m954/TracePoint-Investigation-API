@@ -97,6 +97,7 @@ that joins investigations with suspect names.
 | HTTP client | Axios |
 | Styling | Custom CSS (responsive) |
 | Testing | xUnit (unit + integration) |
+
 # 4. Project Structure
 
 ├── TracePointAPI/            # ASP.NET Core Web API (backend)
